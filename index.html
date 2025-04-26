@@ -17,6 +17,10 @@
       color: gold;
       font-weight: bold;
     }
+     .red-title {
+      color: rgb(255, 38, 0);
+      font-weight: bold;
+    }
     td, th {
       text-align: center;
       vertical-align: middle;
@@ -78,8 +82,11 @@ function renderTable(data) {
     const tr = document.createElement('tr');
 
     let honorHTML = player.荣誉称号 || '';
-    if (honorHTML.includes("至尊玩家")) {
+    if (honorHTML.includes("躲猫猫高手")) {
       honorHTML = `<span class="gold-title">${honorHTML}</span>`;
+    if (honorHTML.includes("躲猫猫大神")) {
+      honorHTML = `<span class="red-title">${honorHTML}</span>`;
+    }
     }
 
     // 处理并列排名
