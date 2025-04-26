@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>燕云十六声 · 躲猫猫积分榜</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    h2 {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    .gold-title {
+      color: gold;
+      font-weight: bold;
+    }
+    td, th {
+      text-align: center;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container mt-5">
+  <h2 class="text-center mb-4">燕云十六声 · 躲猫猫积分榜</h2>
+
+  <table class="table table-hover table-bordered" id="playerTable">
+    <thead class="table-dark">
+      <tr>
+        <th>玩家名字</th>
+        <th>积分</th>
+        <th>名次</th>
+        <th>荣誉称号</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+      <!-- 动态填充 -->
+    </tbody>
+  </table>
+
+  <div class="text-center mt-4">
+    <button class="btn btn-success me-2" onclick="exportExcel()">导出成Excel</button>
+  </div>
+</div>
+
+<script>
+// 修改这里，把你的GitHub仓库里的xlsx文件Raw链接粘过来
+const EXCEL_URL = "https://raw.githubusercontent.com/你的用户名/你的仓库名/main/燕云十六声医院百业名单20250426.xlsx";
+
+async function loadExcel() {
+  const response = await fetch(EXCEL_URL);
+  const arrayBuffer = await response.arrayBuffer();
+  const workbook = XLSX.read(arrayBuffer, { type: "array" });
+  const sheetName = workbook.SheetNames[0];
+  const sheet = workbook.Sheets[sheetName];
+  const data = XLSX.utils.sheet_to_json(sheet);
+
+  renderTable(data);
+}
+
+function renderTable(data) {
+  const tableBody = document.getElementById('tableBody');
+  tableBody.innerHTML = "";
+
+  // 根据积分排序
+  data.sort((a, b) => b.积分 - a.积分);
+
+  data.forEach((player, index) => {
+    const tr = document.createElement('tr');
+
+    let honorHTML = player.荣誉称号 || '';
+    if (honorHTML.includes("至尊玩家")) {
+      honorHTML = `<span class="gold-title">${honorHTML}</span>`;
+    }
+
+    tr.innerHTML = `
+      <td contenteditable="true">${player.玩家名字}</td>
+      <td contenteditable="true">${player.积分}</td>
+      <td>${index + 1}</td>
+      <td contenteditable="true">${honorHTML}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteRow(this)">删除</button></td>
+    `;
+    tableBody.appendChild(tr);
+  });
+}
+
+function deleteRow(button) {
+  const row = button.parentNode.parentNode;
+  row.remove();
+}
+
+function exportExcel() {
+  const table = document.getElementById('playerTable');
+  const wb = XLSX.utils.table_to_book(table, {sheet: "玩家数据"});
+  XLSX.writeFile(wb, "玩家积分榜.xlsx");
+}
+
+loadExcel();
+
+</script>
+
+</body>
+</html>
