@@ -67,21 +67,34 @@ function renderTable(data) {
   const tableBody = document.getElementById('tableBody');
   tableBody.innerHTML = "";
 
-  // 根据积分排序
+  // 按积分从高到低排序
   data.sort((a, b) => b.积分 - a.积分);
+
+  let lastScore = null;
+  let lastRank = 0;
+  let skip = 0;
 
   data.forEach((player, index) => {
     const tr = document.createElement('tr');
 
     let honorHTML = player.荣誉称号 || '';
-    if (honorHTML.includes("躲猫猫高手")) {
+    if (honorHTML.includes("至尊玩家")) {
       honorHTML = `<span class="gold-title">${honorHTML}</span>`;
     }
+
+    // 处理并列排名
+    if (player.积分 === lastScore) {
+      skip++;
+    } else {
+      lastRank = lastRank + skip + 1;
+      skip = 0;
+    }
+    lastScore = player.积分;
 
     tr.innerHTML = `
       <td contenteditable="true">${player.玩家名字}</td>
       <td contenteditable="true">${player.积分}</td>
-      <td>${index + 1}</td>
+      <td>${lastRank}</td>
       <td contenteditable="true">${honorHTML}</td>
       <td><button class="btn btn-danger btn-sm" onclick="deleteRow(this)">删除</button></td>
     `;
