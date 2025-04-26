@@ -84,9 +84,6 @@ function renderTable(data) {
     let honorHTML = player.荣誉称号 || '';
     if (honorHTML.includes("躲猫猫高手")) {
       honorHTML = `<span class="gold-title">${honorHTML}</span>`;
-    if (honorHTML.includes("躲猫猫大神")) {
-      honorHTML = `<span class="red-title">${honorHTML}</span>`;
-    }
     }
 
     // 处理并列排名
